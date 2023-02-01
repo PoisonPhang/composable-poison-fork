@@ -60,8 +60,6 @@ fn test_update_reward_pool() {
 			.try_collect()
 			.expect("Rewards pool has a valid config for creation; QED"),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -176,8 +174,6 @@ fn update_accumulates_properly() {
 						.into(),
 						unlock_penalty: Perbill::from_percent(5),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				},
 			),

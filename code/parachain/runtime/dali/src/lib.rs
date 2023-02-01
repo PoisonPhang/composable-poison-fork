@@ -867,14 +867,13 @@ parameter_types! {
 	pub const MaxStakingDurationPresets : u32 = 10;
 	pub const MaxRewardConfigsPerPool : u32 = 10;
 	pub const StakingRewardsLockId: LockIdentifier = *b"stk_lock";
+	pub const ShareAssetExistentialDeposit: Balance = 10_000;
 }
 
 impl pallet_staking_rewards::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Balance = Balance;
 	type AssetId = CurrencyId;
-	type Assets = AssetsTransactorRouter;
-	type CurrencyFactory = CurrencyFactory;
 	type UnixTime = Timestamp;
 	type ReleaseRewardsPoolsBatchSize = frame_support::traits::ConstU8<13>;
 	type PalletId = StakingRewardsPalletId;
@@ -888,6 +887,8 @@ impl pallet_staking_rewards::Config for Runtime {
 	type LockId = StakingRewardsLockId;
 	type TreasuryAccount = TreasuryAccount;
 	type ExistentialDeposits = MultiExistentialDeposits;
+	type AssetsTransactor = AssetsTransactorRouter;
+	type ShareAssetExistentialDeposit = ShareAssetExistentialDeposit;
 }
 
 /// The calls we permit to be executed by extrinsics

@@ -1,8 +1,12 @@
 use crate as dex_router;
 use crate::mock_fnft::MockFnft;
+use composable_traits::{
+	governance::{GovernanceRegistry, SignedRawOrigin},
+	xcm::assets::XcmAssetLocation,
+};
 use frame_support::{parameter_types, traits::Everything, PalletId};
 use frame_system as system;
-use orml_traits::{parameter_type_with_key, LockIdentifier};
+use orml_traits::{parameter_type_with_key, GetByKey, LockIdentifier};
 use scale_info::TypeInfo;
 use sp_arithmetic::traits::Zero;
 use sp_core::H256;
@@ -59,6 +63,8 @@ frame_support::construct_runtime!(
 		StakingRewards: pallet_staking_rewards::{Pallet, Storage, Call, Event<T>},
 		LpTokenFactory: pallet_currency_factory::{Pallet, Storage, Event<T>},
 		Tokens: orml_tokens::{Pallet, Call, Storage, Config<T>, Event<T>},
+		AssetsRegistry: pallet_assets_registry,
+		AssetsTransactor: pallet_assets_transactor_router,
 		DexRouter: dex_router::{Pallet, Call, Storage, Event<T>},
 		Timestamp: pallet_timestamp::{Pallet, Call, Storage},
 	}
@@ -174,6 +180,20 @@ impl pallet_timestamp::Config for Test {
 	type WeightInfo = ();
 }
 
+pub struct NoopRegistry;
+
+impl<AssetId, AccountId> GovernanceRegistry<AssetId, AccountId> for NoopRegistry {
+	fn set(_k: AssetId, _value: SignedRawOrigin<AccountId>) {}
+}
+
+impl<AssetId> GetByKey<AssetId, Result<SignedRawOrigin<u128>, sp_runtime::DispatchError>>
+	for NoopRegistry
+{
+	fn get(_k: &AssetId) -> Result<SignedRawOrigin<u128>, sp_runtime::DispatchError> {
+		Ok(SignedRawOrigin::Root)
+	}
+}
+
 parameter_types! {
 	// cspell:disable-next
 	pub const StakingRewardsPalletId: PalletId = PalletId(*b"stk_rwrd");
@@ -182,14 +202,41 @@ parameter_types! {
 	pub const MaxRewardConfigsPerPool: u32 = 10;
 	// TODO(benluelo): Use a better value here?
 	pub const TreasuryAccountId: AccountId = 123_456_789_u128;
+	pub const AssetNameMaxChars: u32 = 32;
+	pub const AssetSymbolMaxChars: u32 = 16;
+	pub const ShareAssetExistentialDeposit: Balance = 10_000;
+}
+
+impl pallet_assets_registry::Config for Test {
+	type RuntimeEvent = RuntimeEvent;
+	type LocalAssetId = AssetId;
+	type ForeignAssetId = XcmAssetLocation;
+	type UpdateAssetRegistryOrigin = EnsureRoot<AccountId>;
+	type ParachainOrGovernanceOrigin = EnsureRoot<AccountId>;
+	type WeightInfo = ();
+	type Balance = Balance;
+	type AssetSymbolMaxChars = AssetSymbolMaxChars;
+	type AssetNameMaxChars = AssetNameMaxChars;
+}
+
+impl pallet_assets_transactor_router::Config for Test {
+	type AssetId = AssetId;
+	type Balance = Balance;
+	type NativeAssetId = NativeAssetId;
+	type NativeTransactor = Balances;
+	type LocalTransactor = Tokens;
+	type ForeignTransactor = Tokens;
+	type GovernanceRegistry = NoopRegistry;
+	type WeightInfo = ();
+	type AdminOrigin = EnsureRoot<AccountId>;
+	type AssetLocation = XcmAssetLocation;
+	type AssetsRegistry = AssetsRegistry;
 }
 
 impl pallet_staking_rewards::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type Balance = Balance;
 	type AssetId = AssetId;
-	type Assets = Tokens;
-	type CurrencyFactory = LpTokenFactory;
 	type UnixTime = Timestamp;
 	type ReleaseRewardsPoolsBatchSize = frame_support::traits::ConstU8<13>;
 	type PalletId = StakingRewardsPalletId;
@@ -203,6 +250,8 @@ impl pallet_staking_rewards::Config for Test {
 	type LockId = StakingRewardsLockId;
 	type TreasuryAccount = TreasuryAccountId;
 	type ExistentialDeposits = ExistentialDeposits;
+	type AssetsTransactor = AssetsTransactor;
+	type ShareAssetExistentialDeposit = ShareAssetExistentialDeposit;
 }
 
 impl pallet_pablo::Config for Test {

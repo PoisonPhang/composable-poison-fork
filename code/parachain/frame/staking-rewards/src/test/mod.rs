@@ -94,8 +94,6 @@ fn duration_presets_minimum_is_1() {
 					.into(),
 					unlock_penalty: Perbill::from_percent(5),
 				},
-				share_asset_id: XPICA::ID,
-				financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 				minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 			},
 		));
@@ -121,8 +119,6 @@ fn zero_length_duration_preset_works() {
 					.into(),
 					unlock_penalty: Perbill::from_percent(5),
 				},
-				share_asset_id: XPICA::ID,
-				financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 				minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 			},
 		));
@@ -144,8 +140,6 @@ fn create_staking_reward_pool_should_fail_when_pool_asset_id_is_zero() {
 					start_block: 2,
 					reward_configs: default_reward_config(),
 					lock: default_lock_config(),
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				}
 			),
@@ -181,8 +175,6 @@ fn create_staking_reward_pool_should_fail_when_slashed_amount_is_less_than_exist
 						.into(),
 						unlock_penalty: Perbill::from_percent(99),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				}
 			),
@@ -219,8 +211,6 @@ fn create_staking_reward_pool_should_fail_when_slashed_minimum_amount_is_less_th
 						.into(),
 						unlock_penalty: Perbill::from_percent(60),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: 10,
 				}
 			),
@@ -244,8 +234,6 @@ fn create_staking_reward_pool_should_fail_when_share_asset_id_is_zero() {
 					start_block: 2,
 					reward_configs: default_reward_config(),
 					lock: default_lock_config(),
-					share_asset_id: 0,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				}
 			),
@@ -269,8 +257,6 @@ fn create_staking_reward_pool_should_fail_when_fnft_collection_asset_id_is_zero(
 					start_block: 2,
 					reward_configs: default_reward_config(),
 					lock: default_lock_config(),
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: 0,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				}
 			),
@@ -357,8 +343,6 @@ fn split_should_fail_if_any_amount_is_less_than_minimum() {
 			start_block: 2,
 			reward_configs: default_reward_config(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -431,8 +415,6 @@ fn split_doesnt_cause_loss_in_assets() {
 			start_block: 2,
 			reward_configs: default_reward_config(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -618,7 +600,7 @@ mod extend {
 	use composable_support::validation::TryIntoValidated;
 	use composable_tests_helpers::test::{
 		block::process_and_progress_blocks,
-		currency::{Currency, USDT, XPICA},
+		currency::{Currency, USDT},
 		helper::RuntimeTrait,
 	};
 	use composable_traits::{
@@ -680,8 +662,6 @@ mod extend {
 						.into(),
 						unlock_penalty: Perbill::from_percent(5),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				},
 			);
@@ -801,8 +781,6 @@ mod extend {
 						.into(),
 						unlock_penalty: Perbill::from_percent(5),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				},
 			);
@@ -1103,8 +1081,6 @@ fn test_split_position() {
 			start_block: 2,
 			reward_configs: default_reward_config(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		};
 
@@ -1180,8 +1156,6 @@ fn split_positions_accrue_same_as_original_position() {
 			.try_collect()
 			.unwrap(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -1289,8 +1263,6 @@ fn claim_with_insufficient_pot_funds() {
 				.into(),
 				unlock_penalty: Perbill::from_percent(5),
 			},
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -1398,8 +1370,6 @@ fn unstake_should_not_allow_non_owner() {
 			start_block: 2,
 			reward_configs: default_reward_config(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -1473,8 +1443,6 @@ fn unstake_should_work() {
 			.try_collect()
 			.unwrap(),
 			lock: default_lock_config(),
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 		});
 
@@ -1731,8 +1699,6 @@ fn duration_presets_are_required() {
 						duration_multipliers: BoundedBTreeMap::new().into(),
 						unlock_penalty: Perbill::from_percent(5),
 					},
-					share_asset_id: XPICA::ID,
-					financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 					minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 				},
 			),
@@ -2047,8 +2013,6 @@ fn create_default_reward_pool() {
 				start_block: 2,
 				reward_configs: default_reward_config(),
 				lock: default_lock_config(),
-				share_asset_id: XPICA::ID,
-				financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 				minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 			},
 		),
@@ -2064,8 +2028,6 @@ fn get_default_reward_pool() -> RewardPoolConfigurationOf<Test> {
 		start_block: 2,
 		reward_configs: default_reward_config(),
 		lock: default_lock_config(),
-		share_asset_id: XPICA::ID,
-		financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 		minimum_staking_amount: MINIMUM_STAKING_AMOUNT,
 	}
 }
@@ -2101,7 +2063,7 @@ fn mint_assets(
 	let asset_ids = Vec::from_iter(asset_ids);
 	for account in accounts {
 		for asset_id in &asset_ids {
-			<<Test as crate::Config>::Assets as Mutate<
+			<<Test as crate::Config>::AssetsTransactor as Mutate<
 				<Test as frame_system::Config>::AccountId,
 			>>::mint_into(*asset_id, &account, amount)
 			.expect("an asset minting expected");
@@ -2110,9 +2072,9 @@ fn mint_assets(
 }
 
 fn balance(asset_id: u128, account: &Public) -> u128 {
-	<<Test as crate::Config>::Assets as Inspect<<Test as frame_system::Config>::AccountId>>::balance(
-		asset_id, account,
-	)
+	<<Test as crate::Config>::AssetsTransactor as Inspect<
+		<Test as frame_system::Config>::AccountId,
+	>>::balance(asset_id, account)
 }
 
 fn update_total_rewards_and_total_shares_in_rewards_pool(pool_id: u128, total_rewards: u128) {
@@ -2151,8 +2113,6 @@ fn zero_penalty_early_unlock() {
 				.into(),
 				unlock_penalty: Perbill::zero(),
 			},
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: 100_000,
 		});
 
@@ -2367,8 +2327,6 @@ fn zero_penalty_no_multiplier_doesnt_slash() {
 				.into(),
 				unlock_penalty: Perbill::zero(),
 			},
-			share_asset_id: XPICA::ID,
-			financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID,
 			minimum_staking_amount: 100_000,
 		});
 

@@ -42,8 +42,6 @@ fn get_reward_pool<T: Config>(
 		start_block: 2_u128.saturated_into(),
 		reward_configs: reward_config::<T>(reward_count),
 		lock: lock_config::<T>(),
-		share_asset_id: X_ASSET_ID.into(),
-		financial_nft_asset_id: STAKING_FNFT_COLLECTION_ID.into(),
 		minimum_staking_amount: 10_000_u128.into(),
 	}
 }
@@ -118,7 +116,7 @@ benchmarks! {
 
 		frame_system::Pallet::<T>::set_block_number(1.into());
 		<Pallet<T>>::create_reward_pool(OriginFor::<T>::root(), get_reward_pool::<T>(pool_owner, r))?;
-		<T::Assets as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
 
 		frame_system::Pallet::<T>::set_block_number(2.into());
 	}: _(OriginFor::<T>::signed(staker.clone()), asset_id, amount, duration_preset)
@@ -148,7 +146,7 @@ benchmarks! {
 
 		frame_system::Pallet::<T>::set_block_number(1.into());
 		<Pallet<T>>::create_reward_pool(OriginFor::<T>::root(), get_reward_pool::<T>(pool_owner, r))?;
-		<T::Assets as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 3.into()).expect("an asset minting expected");
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 3.into()).expect("an asset minting expected");
 
 		frame_system::Pallet::<T>::set_block_number(2.into());
 		<Pallet<T>>::stake(OriginFor::<T>::signed(staker.clone()), asset_id, amount, duration_preset)?;
@@ -174,7 +172,7 @@ benchmarks! {
 
 		frame_system::Pallet::<T>::set_block_number(1.into());
 		<Pallet<T>>::create_reward_pool(OriginFor::<T>::root(), get_reward_pool::<T>(pool_owner, r))?;
-		<T::Assets as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
 
 		frame_system::Pallet::<T>::set_block_number(2.into());
 		<Pallet<T>>::stake(OriginFor::<T>::signed(staker.clone()), asset_id, amount, duration_preset)?;
@@ -202,7 +200,7 @@ benchmarks! {
 
 		frame_system::Pallet::<T>::set_block_number(frame_system::Pallet::<T>::current_block_number() + T::BlockNumber::one());
 
-		<T::Assets as Mutate<T::AccountId>>::mint_into(
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(
 			BASE_ASSET_ID.into(),
 			&user,
 			100_000_000_000.into(),
@@ -241,8 +239,6 @@ benchmarks! {
 				.try_collect()
 				.unwrap(),
 			lock: lock_config::<T>(),
-			share_asset_id: 1000.into(),
-			financial_nft_asset_id: 2000.into(),
 			minimum_staking_amount: 10_000.into(),
 		}).unwrap();
 
@@ -286,7 +282,7 @@ benchmarks! {
 
 		frame_system::Pallet::<T>::set_block_number(1.into());
 		<Pallet<T>>::create_reward_pool(OriginFor::<T>::root(), get_reward_pool::<T>(pool_owner, r))?;
-		<T::Assets as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(asset_id, &staker, amount * 2.into())?;
 
 		frame_system::Pallet::<T>::set_block_number(2.into());
 		<Pallet<T>>::stake(OriginFor::<T>::signed(staker.clone()), asset_id, amount, duration_preset)?;
@@ -303,7 +299,7 @@ benchmarks! {
 
 		let user: T::AccountId = account("user", 0, 0);
 		let pool_id = <Pallet<T> as ManageStaking>::create_staking_pool(get_reward_pool::<T>(user.clone(), 1)).unwrap();
-		<T::Assets as Mutate<T::AccountId>>::mint_into(asset_id, &user, amount * 2.into())?;
+		<T::AssetsTransactor as Mutate<T::AccountId>>::mint_into(asset_id, &user, amount * 2.into())?;
 
 	}: _(OriginFor::<T>::signed(user), pool_id,  asset_id, amount, true)
 
