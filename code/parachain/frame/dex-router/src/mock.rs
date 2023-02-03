@@ -23,7 +23,6 @@ pub type Amount = i128;
 pub type PoolId = u128;
 pub type BlockNumber = u64;
 pub type AccountId = u128;
-pub type CurrencyId = u128;
 
 #[allow(dead_code)]
 pub static ALICE: AccountId = 1;
@@ -39,7 +38,6 @@ pub const USDT: AssetId = 2;
 pub const ETH: AssetId = 3;
 pub const USDC: AssetId = 4;
 pub const DAI: AssetId = 5;
-pub const LP_TOKEN_GENERIC: AssetId = 102;
 pub const TWAP_INTERVAL: Moment = 10;
 pub const MILLISECS_PER_BLOCK: u64 = 12000;
 
@@ -61,7 +59,6 @@ frame_support::construct_runtime!(
 		Balances: pallet_balances::{Pallet, Call, Storage, Event<T>},
 		Pablo : pallet_pablo::{Pallet, Call, Storage, Event<T>},
 		StakingRewards: pallet_staking_rewards::{Pallet, Storage, Call, Event<T>},
-		LpTokenFactory: pallet_currency_factory::{Pallet, Storage, Event<T>},
 		Tokens: orml_tokens::{Pallet, Call, Storage, Config<T>, Event<T>},
 		AssetsRegistry: pallet_assets_registry,
 		AssetsTransactor: pallet_assets_transactor_router,
@@ -69,14 +66,6 @@ frame_support::construct_runtime!(
 		Timestamp: pallet_timestamp::{Pallet, Call, Storage},
 	}
 );
-
-impl pallet_currency_factory::Config for Test {
-	type RuntimeEvent = RuntimeEvent;
-	type AssetId = AssetId;
-	type AddOrigin = EnsureRoot<AccountId>;
-	type Balance = Balance;
-	type WeightInfo = ();
-}
 
 parameter_types! {
 	pub const BlockHashCount: u64 = 250;
@@ -202,8 +191,6 @@ parameter_types! {
 	pub const MaxRewardConfigsPerPool: u32 = 10;
 	// TODO(benluelo): Use a better value here?
 	pub const TreasuryAccountId: AccountId = 123_456_789_u128;
-	pub const AssetNameMaxChars: u32 = 32;
-	pub const AssetSymbolMaxChars: u32 = 16;
 	pub const ShareAssetExistentialDeposit: Balance = 10_000;
 }
 
@@ -215,8 +202,7 @@ impl pallet_assets_registry::Config for Test {
 	type ParachainOrGovernanceOrigin = EnsureRoot<AccountId>;
 	type WeightInfo = ();
 	type Balance = Balance;
-	type AssetSymbolMaxChars = AssetSymbolMaxChars;
-	type AssetNameMaxChars = AssetNameMaxChars;
+	type Convert = ConvertInto;
 }
 
 impl pallet_assets_transactor_router::Config for Test {
@@ -254,21 +240,25 @@ impl pallet_staking_rewards::Config for Test {
 	type ShareAssetExistentialDeposit = ShareAssetExistentialDeposit;
 }
 
+parameter_types! {
+	pub const LPTED: Balance = 0;
+}
+
 impl pallet_pablo::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type AssetId = AssetId;
 	type Balance = Balance;
-	type CurrencyFactory = LpTokenFactory;
 	type Assets = Tokens;
+	type LPTokenFactory = AssetsTransactor;
 	type Convert = ConvertInto;
 	type PoolId = PoolId;
 	type PalletId = TestPalletID;
-	type LocalAssets = LpTokenFactory;
 	type PoolCreationOrigin = EnsureSigned<Self::AccountId>;
 	type EnableTwapOrigin = EnsureRoot<AccountId>;
 	type Time = Timestamp;
 	type TWAPInterval = TWAPInterval;
 	type WeightInfo = ();
+	type LPTokenExistentialDeposit = LPTED;
 }
 
 parameter_types! {

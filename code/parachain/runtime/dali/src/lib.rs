@@ -1045,8 +1045,9 @@ impl lending::Config for Runtime {
 }
 
 parameter_types! {
-  pub PabloId: PalletId = PalletId(*b"pall_pab");
-  pub TWAPInterval: u64 = (MILLISECS_PER_BLOCK as u64) * 10;
+	pub PabloId: PalletId = PalletId(*b"pall_pab");
+	pub TWAPInterval: u64 = (MILLISECS_PER_BLOCK as u64) * 10;
+	pub const LPTokenEd: Balance = 10_000;
 }
 
 impl pablo::Config for Runtime {
@@ -1054,17 +1055,17 @@ impl pablo::Config for Runtime {
 	type AssetId = CurrencyId;
 	type Balance = Balance;
 	type Convert = ConvertInto;
-	type CurrencyFactory = CurrencyFactory;
 	type Assets = AssetsTransactorRouter;
+	type LPTokenFactory = AssetsTransactorRouter;
 	type PoolId = PoolId;
 	type PalletId = PabloId;
-	type LocalAssets = CurrencyFactory;
 	type PoolCreationOrigin = EnsureRootOrHalfNativeCouncil;
 	// TODO: consider making it is own origin
 	type EnableTwapOrigin = EnsureRootOrHalfNativeCouncil;
 	type TWAPInterval = TWAPInterval;
 	type Time = Timestamp;
 	type WeightInfo = weights::pablo::WeightInfo<Runtime>;
+	type LPTokenExistentialDeposit = LPTokenEd;
 }
 
 parameter_types! {

@@ -70,7 +70,6 @@ use core::{
 use frame_support::{
 	traits::{
 		fungibles::{Inspect as FungiblesInspect, InspectHold, MutateHold, Transfer},
-		tokens::fungibles::metadata::Inspect,
 		Defensive, DefensiveSaturating, UnixTime,
 	},
 	BoundedBTreeMap,
@@ -701,12 +700,10 @@ pub mod pallet {
 						.try_collect()
 						.expect("No items were added; qed;");
 
-					let share_asset_id = Self::register_share_asset(
-						pool_asset,
+					let share_asset_id = Self::register_protocol_asset(
 						NextShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
 					)?;
-					let financial_nft_asset_id = Self::registre_fnft_collection_asset(
-						pool_asset,
+					let financial_nft_asset_id = Self::register_protocol_asset(
 						NextShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
 					)?;
 
@@ -1820,53 +1817,13 @@ pub(crate) fn claim_of_stake<T: Config>(
 }
 
 impl<T: Config> Pallet<T> {
-	pub fn register_share_asset(
-		staked_asset_id: T::AssetId,
-		nonce: u64,
-	) -> Result<T::AssetId, DispatchError> {
-		// Create name as "x[STAKED_TOKEN_NAME]"
-		let mut staked_asset_name = T::AssetsTransactor::name(staked_asset_id);
-		let mut name: Vec<u8> = vec![b'x'];
-		name.append(&mut staked_asset_name);
-
-		// Create symbol as "x[STAKED_TOKEN_SYMBOL]"
-		let mut staked_asset_symbol = T::AssetsTransactor::symbol(staked_asset_id);
-		let mut symbol: Vec<u8> = vec![b'x'];
-		symbol.append(&mut staked_asset_symbol);
-
+	pub fn register_protocol_asset(nonce: u64) -> Result<T::AssetId, DispatchError> {
 		T::AssetsTransactor::create_local_asset(
 			T::PalletId::get().0,
 			nonce,
 			AssetInfo {
-				name,
-				symbol,
-				decimals: 12,
-				existential_deposit: T::ShareAssetExistentialDeposit::get(),
-				ratio: None,
-			},
-		)
-	}
-
-	pub fn registre_fnft_collection_asset(
-		staked_asset_id: T::AssetId,
-		nonce: u64,
-	) -> Result<T::AssetId, DispatchError> {
-		// Create name as "fNFT Collection x[STAKED_TOKEN_NAME]"
-		let mut staked_asset_name = T::AssetsTransactor::name(staked_asset_id);
-		let mut name: Vec<u8> = b"fNFT Collection x".to_vec();
-		name.append(&mut staked_asset_name);
-
-		// Create symbol as "fNFTx[STAKED_TOKEN_SYMBOL]"
-		let mut staked_asset_symbol = T::AssetsTransactor::symbol(staked_asset_id);
-		let mut symbol: Vec<u8> = b"fNFTx".to_vec();
-		symbol.append(&mut staked_asset_symbol);
-
-		T::AssetsTransactor::create_local_asset(
-			T::PalletId::get().0,
-			nonce,
-			AssetInfo {
-				name,
-				symbol,
+				name: None,
+				symbol: None,
 				decimals: 12,
 				existential_deposit: T::ShareAssetExistentialDeposit::get(),
 				ratio: None,

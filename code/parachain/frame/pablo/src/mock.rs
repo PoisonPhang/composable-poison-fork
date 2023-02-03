@@ -45,7 +45,6 @@ frame_support::construct_runtime!(
 	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		Pablo: pablo::{Pallet, Call, Storage, Event<T>},
-		LpTokenFactory: pallet_currency_factory::{Pallet, Storage, Event<T>},
 		Balances: pallet_balances,
 		Tokens: orml_tokens::{Pallet, Call, Storage, Config<T>, Event<T>},
 		AssetsRegistry: pallet_assets_registry,
@@ -54,14 +53,6 @@ frame_support::construct_runtime!(
 		StakingRewards: pallet_staking_rewards::{Pallet, Storage, Call, Event<T>},
 	}
 );
-
-impl pallet_currency_factory::Config for Test {
-	type RuntimeEvent = RuntimeEvent;
-	type AssetId = CurrencyId;
-	type AddOrigin = EnsureRoot<AccountId>;
-	type Balance = Balance;
-	type WeightInfo = ();
-}
 
 parameter_types! {
 	pub const ExistentialDeposit: u64 = 1;
@@ -204,8 +195,6 @@ parameter_types! {
 	pub const MaxRewardConfigsPerPool: u32 = 10;
 	// REVIEW(benluelo): Use a better value for this?
 	pub const TreasuryAccountId: AccountId = 123_456_789_u128;
-	pub const AssetNameMaxChars: u32 = 32;
-	pub const AssetSymbolMaxChars: u32 = 16;
 	pub const ShareAssetExistentialDeposit: Balance = 10_000;
 	pub const NativeAssetId: AssetId = 1;
 }
@@ -218,8 +207,7 @@ impl pallet_assets_registry::Config for Test {
 	type ParachainOrGovernanceOrigin = EnsureRoot<AccountId>;
 	type WeightInfo = ();
 	type Balance = Balance;
-	type AssetSymbolMaxChars = AssetSymbolMaxChars;
-	type AssetNameMaxChars = AssetNameMaxChars;
+	type Convert = ConvertInto;
 }
 
 impl pallet_assets_transactor_router::Config for Test {
@@ -259,18 +247,18 @@ impl pallet_staking_rewards::Config for Test {
 
 ord_parameter_types! {
 	pub const RootAccount: AccountId = ALICE;
+	pub const LPTokenED: Balance = 10_000;
 }
 
 impl pablo::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type AssetId = AssetId;
 	type Balance = Balance;
-	type CurrencyFactory = LpTokenFactory;
+	type LPTokenFactory = AssetsTransactor;
 	type Assets = Tokens;
 	type Convert = ConvertInto;
 	type PoolId = PoolId;
 	type PalletId = TestPalletID;
-	type LocalAssets = LpTokenFactory;
 	type PoolCreationOrigin = EitherOfDiverse<
 		EnsureSignedBy<RootAccount, AccountId>, // for tests
 		EnsureRoot<AccountId>,                  // for benchmarks
@@ -279,6 +267,7 @@ impl pablo::Config for Test {
 	type Time = Timestamp;
 	type TWAPInterval = TWAPInterval;
 	type WeightInfo = ();
+	type LPTokenExistentialDeposit = LPTokenED;
 }
 
 // Build genesis storage according to the mock runtime.

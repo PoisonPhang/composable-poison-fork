@@ -21,7 +21,7 @@ use orml_traits::{parameter_type_with_key, GetByKey, LockIdentifier};
 use sp_core::sr25519;
 use sp_runtime::{
 	testing::Header,
-	traits::{BlakeTwo256, IdentifyAccount, IdentityLookup, Verify},
+	traits::{BlakeTwo256, ConvertInto, IdentifyAccount, IdentityLookup, Verify},
 };
 
 pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::AccountId;
@@ -186,8 +186,6 @@ impl<CurrencyId>
 parameter_types! {
 	pub const MaxStrategies: usize = 255;
 	pub const NativeAssetId: CurrencyId = PICA::ID;
-	pub const AssetNameMaxChars: u32 = 32;
-	pub const AssetSymbolMaxChars: u32 = 16;
 }
 
 impl pallet_assets_registry::Config for Test {
@@ -198,8 +196,7 @@ impl pallet_assets_registry::Config for Test {
 	type ParachainOrGovernanceOrigin = EnsureRoot<AccountId>;
 	type WeightInfo = ();
 	type Balance = Balance;
-	type AssetSymbolMaxChars = AssetSymbolMaxChars;
-	type AssetNameMaxChars = AssetNameMaxChars;
+	type Convert = ConvertInto;
 }
 
 impl pallet_assets_transactor_router::Config for Test {
