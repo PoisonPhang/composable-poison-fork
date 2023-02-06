@@ -3,7 +3,7 @@ use core::ops::Mul;
 use composable_support::validation::TryIntoValidated;
 use composable_tests_helpers::test::{
 	block::process_and_progress_blocks,
-	currency::{PICA, USDT, XPICA},
+	currency::{PICA, USDT},
 	helper::RuntimeTrait,
 };
 use composable_traits::{
@@ -28,12 +28,13 @@ use crate::{
 	},
 	test::{
 		default_lock_config, mint_assets, new_test_ext,
-		prelude::{block_seconds, init_logger, MINIMUM_STAKING_AMOUNT, STAKING_FNFT_COLLECTION_ID},
+		prelude::{block_seconds, init_logger, MINIMUM_STAKING_AMOUNT},
 		test_reward_accumulation_hook::{check_rewards, CheckRewards, PoolRewards},
 	},
 	test_helpers::{
 		add_to_rewards_pot_and_assert, create_rewards_pool_and_assert, stake_and_assert,
 	},
+	RewardPools,
 };
 
 #[test]
@@ -190,19 +191,17 @@ fn update_accumulates_properly() {
 		assert_eq!(System::block_number(), 50);
 
 		mint_assets([CHARLIE], [PICA::ID], PICA::units(101));
+		let fnft_collection_id =
+			RewardPools::<Test>::get(PICA::ID).expect("Pool exists").financial_nft_asset_id;
 		let stake_id = stake_and_assert::<Test>(CHARLIE, PICA::ID, PICA::units(100), ONE_HOUR);
 
 		process_and_progress_blocks::<StakingRewards, Test>(1);
 
 		Test::assert_extrinsic_event(
-			StakingRewards::claim(
-				RuntimeOrigin::signed(CHARLIE),
-				STAKING_FNFT_COLLECTION_ID,
-				stake_id,
-			),
+			StakingRewards::claim(RuntimeOrigin::signed(CHARLIE), fnft_collection_id, stake_id),
 			crate::Event::Claimed {
 				owner: CHARLIE,
-				fnft_collection_id: STAKING_FNFT_COLLECTION_ID,
+				fnft_collection_id,
 				fnft_instance_id: stake_id,
 				claimed_amounts: [(USDT::ID, USDT::units(1) / 1_000 * 6)].into_iter().collect(),
 			},

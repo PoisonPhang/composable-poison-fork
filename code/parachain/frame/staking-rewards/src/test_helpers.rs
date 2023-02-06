@@ -155,7 +155,7 @@ pub fn unstake_and_assert<Runtime>(
 	let rewards_pool = Pallet::<Runtime>::pools(position_before_unstake.reward_pool_id)
 		.expect("rewards_pool expected");
 
-	let total_shares = Runtime::Assets::total_issuance(rewards_pool.share_asset_id);
+	let total_shares = Runtime::AssetsTransactor::total_issuance(rewards_pool.share_asset_id);
 	let pool_account = Pallet::<Runtime>::pool_account_id(&position_before_unstake.reward_pool_id);
 	let pool_account_shares_balance_before_unstake =
 		Runtime::AssetsTransactor::balance(rewards_pool.share_asset_id, &pool_account);
@@ -240,12 +240,12 @@ pub fn unstake_and_assert<Runtime>(
 	);
 	assert_eq!(
 		total_shares,
-		Runtime::Assets::total_issuance(rewards_pool.share_asset_id),
+		Runtime::AssetsTransactor::total_issuance(rewards_pool.share_asset_id),
 		"Total pool shares must not change after unstaking"
 	);
 	assert_eq!(
 		position_before_unstake.share + pool_account_shares_balance_before_unstake,
-		Runtime::Assets::balance(rewards_pool.share_asset_id, &pool_account),
+		Runtime::AssetsTransactor::balance(rewards_pool.share_asset_id, &pool_account),
 		"Pool account shares must increase after unstaking"
 	);
 	assert!(
