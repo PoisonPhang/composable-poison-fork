@@ -1,5 +1,5 @@
 use crate::{
-	create_lpt_asset, AssetIdOf, Config, Error, NextLPTNonce, PoolConfiguration, PoolCount, Pools,
+	create_lpt_asset, AssetIdOf, Config, Error, LPTNonce, PoolConfiguration, PoolCount, Pools,
 };
 use composable_maths::dex::{
 	constant_product::{
@@ -69,7 +69,7 @@ impl<T: Config> DualAssetConstantProduct<T> {
 							owner: who.clone(),
 							assets_weights,
 							lp_token: create_lpt_asset::<T>(
-								NextLPTNonce::<T>::increment().expect("Does not exceed u64::MAX"),
+								LPTNonce::<T>::increment().expect("Does not exceed u64::MAX"),
 							)?,
 							fee_config,
 						}),

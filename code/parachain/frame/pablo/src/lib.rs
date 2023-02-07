@@ -328,9 +328,8 @@ pub mod pallet {
 		StorageMap<_, Blake2_128Concat, T::PoolId, PriceCumulativeStateOf<T>, OptionQuery>;
 
 	#[pallet::storage]
-	#[pallet::getter(fn next_lpt_nonce)]
-	pub type NextLPTNonce<T: Config> =
-		StorageValue<_, u64, ValueQuery, Nonce<OneInit, SafeIncrement>>;
+	#[allow(clippy::disallowed_types)] // Allow for `ValueQuery` because of nonce
+	pub type LPTNonce<T: Config> = StorageValue<_, u64, ValueQuery, Nonce<OneInit, SafeIncrement>>;
 
 	pub(crate) enum PriceRatio {
 		Swapped,

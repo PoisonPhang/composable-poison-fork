@@ -168,10 +168,9 @@ pub trait CreateAsset {
 	) -> Result<Self::LocalAssetId, DispatchError>;
 }
 
+/// Used temporarily while the Picasso runtime is migrated to the new Asset Transactor Router
 pub struct DummyAssetCreator<LocalAssetId, ForeignAssetId, Balance> {
-	phantom_local_id: PhantomData<LocalAssetId>,
-	phantom_foreign_id: PhantomData<ForeignAssetId>,
-	phantom_balance: PhantomData<Balance>,
+	_phantom_data: (PhantomData<LocalAssetId>, PhantomData<ForeignAssetId>, PhantomData<Balance>),
 }
 
 impl<LocalAssetId, ForeignAssetId, Balance> CreateAsset

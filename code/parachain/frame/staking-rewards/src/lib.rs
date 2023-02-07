@@ -396,6 +396,7 @@ pub mod pallet {
 
 		type ExistentialDeposits: GetByKey<Self::AssetId, Self::Balance>;
 
+		/// The default existential deposit for newly created share tokens
 		#[pallet::constant]
 		type ShareAssetExistentialDeposit: Get<Self::Balance>;
 	}
@@ -456,7 +457,7 @@ pub mod pallet {
 
 	#[pallet::storage]
 	#[allow(clippy::disallowed_types)]
-	pub type NextShareAssetNonce<T: Config> =
+	pub type ShareAssetNonce<T: Config> =
 		StorageValue<_, u64, ValueQuery, Nonce<OneInit, SafeIncrement>>;
 
 	#[pallet::hooks]
@@ -701,10 +702,10 @@ pub mod pallet {
 						.expect("No items were added; qed;");
 
 					let share_asset_id = Self::register_protocol_asset(
-						NextShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
+						ShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
 					)?;
 					let financial_nft_asset_id = Self::register_protocol_asset(
-						NextShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
+						ShareAssetNonce::<T>::increment().expect("Does not exceed `u64::MAX`"),
 					)?;
 
 					RewardPools::<T>::insert(

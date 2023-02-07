@@ -253,7 +253,7 @@ impl assets_registry::Config for Runtime {
 parameter_types! {
 	pub PabloPalletId: PalletId = PalletId(*b"pal_pblo");
 	pub TWAPInterval: u64 = (MILLISECS_PER_BLOCK as u64) * 10;
-	pub LPTokenED: Balance = 10_000;
+	pub LPTokenExistentialDeposit: Balance = 10_000;
 }
 
 impl pablo::Config for Runtime {
@@ -271,7 +271,7 @@ impl pablo::Config for Runtime {
 	type Time = Timestamp;
 	type TWAPInterval = TWAPInterval;
 	type WeightInfo = weights::pablo::WeightInfo<Runtime>;
-	type LPTokenExistentialDeposit = LPTokenED;
+	type LPTokenExistentialDeposit = LPTokenExistentialDeposit;
 }
 
 impl assets::Config for Runtime {
